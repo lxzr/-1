@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="layer/layer.js"></script>
+</head>
+<body>
+<!--姓名<input id="name">
+密码<input id="password">
+<button id="button1" >提交</button>
+<a href="classification">返回</a>-->
+
+</body>
+<script>
+  window.onload=function(){
+  layer.alert("nihao")
+   layer.open({    
+           type: 2,    
+           title: '用户登录',    
+           maxmin: true,    
+           skin: 'layui-layer-lan',    
+           shadeClose: false, //点击遮罩关闭层    
+           area : ['400px' , '280px'],    
+           content:'login'//弹框显示的url,对应的页面  
+       });    
+}
+    </script>
+    
+</html>

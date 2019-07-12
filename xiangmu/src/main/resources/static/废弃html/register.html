@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <style type="text/css">
+body{
+			margin: 0;
+		
+		    }
+*{
+		    	padding: 0;
+		    	margin: 0;
+		    }
+.d0{
+    height:60px;
+    width:380px;
+    margin-top:10px;
+    text-align: center;
+    font-size: 30px;
+    }
+.d1{
+    height:60px;
+    width:380px;
+    margin-top:10px;
+     text-align: center;
+    }
+   
+.d2{
+    height:60px;
+    width:240px;
+    text-align: left;
+    float:left;
+    padding-left:40px;
+    }
+.d3{
+    height:60px;
+    width:80px;
+    text-align: left;
+    float:right;
+    }
+.in1{
+     height:25px;
+     width:150px;
+     }
+</style>
+</head>
+
+<body>
+<div style="height:800px;width:100%;background-image: url(img/lx.png) ;backgroun-size:100% 100%;">
+   <div style="height:400px;width:400px;margin: 0 auto;position: absolute;top:200px;left:600px;background-color: darkgray;">
+           <div class="d0"><span style="color: white;font-size: 30px;">新闻系统信息管理平台</span></div>
+           <div class="d1">
+            <div class="d2"><span style="color: white;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;姓名</span><input id="name" class="in1"/></div>
+            <div class="d3"><span id="sname" style="font-size: 10px;"></span></div>
+            </div>
+           <div class="d1">
+            <div class="d2"><span style="color: white;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;密码</span><input type="password" id="password" class="in1"/></div>
+            <div class="d3"><span id="spassword" style="font-size: 10px;"></span></div>
+            </div>
+           <div class="d1">
+            <div class="d2"><span style="color: white;">确认密码</span><input type="password" id="rpassword" class="in1"/></div>
+            <div class="d3"><span id="spassword1" style="font-size: 10px;"></span></div>
+            </div>
+           <div class="d1"><button style="display: inline-block;color: white;maigin-right:20px;background-color:green;font-size: 20px;" onclick="register()">注册</button>
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button style="display: inline-block;color: white;maigin-left:20px;background-color:red;font-size: 20px;" onclick="login()">返回</button></div>
+   </div>
+</div>
+</body>
+
+<script type="text/javascript">
+function register() {
+         var str1=checkName();
+        // alert(str1)
+        var name = document.getElementById("name").value;
+        var password = document.getElementById("password").value;
+        var rpassword = document.getElementById("rpassword").value;
+        var sname = document.getElementById("sname");
+		var spassword = document.getElementById("spassword");
+		var spassword1 = document.getElementById("spassword1");
+        if (name == "" | name == null | name == undefined) {
+            sname.innerText = "用户名不能为空";
+            spassword.innerText = "";
+            $("#sname").css("color","red");
+            spassword1.innerText = "";
+        }else if(password == "" | password == null | password == undefined){
+            sname.innerText = "";
+            spassword.innerText = "密码不能为空";
+            spassword1.innerText = "";
+           $("#spassword").css("color","red");
+        }else if(rpassword == "" | rpassword == null | rpassword == undefined){
+            sname.innerText = "";
+            spassword1.innerText = "密码不能为空";
+              
+           $("#spassword1 ").css("color","red");
+        }else if(rpassword!=password){
+            sname.innerText = "";
+            spassword1.innerText = "两次密码不相同";
+            $("#spassword1").css("color","red");
+        }else if(str1){
+                       $("#sname").text(" * 用户名已经存在");
+						$("#sname").css("color","red");
+						$("#spassword").text("");
+          }
+        else {
+            	 sname.innerText = "";
+            	 spassword.innerText = "";
+            	 spassword1.innerText = "";
+         		 $.ajax({
+						type : "get",
+						url : "/util/saveUser",
+						data: {
+				  		  "name":name,
+						  "password":password,
+							},
+	      				dataType: "text",
+		  				success:function(data){
+		    			  if(data=="true"){
+                       		 alert("注册成功")
+                      	window.location.href="login"; 
+                      		
+                  			}
+                 		 else{
+                    			 alert("发生未知错误") ;
+                    			  location.reload(true);
+                  			}
+		 				}
+		 			});  
+		 			
+		 		 
+        	}
+  }
+ 
+//查看名字是否可用
+  $("#name").on("blur",checkName)
+function checkName(){
+		//alert("nihao");
+	    var ss=true;
+		if($("#name").val()==null|$("#name").val()==""){
+		             $("#sname").text(" * 用户名不能为空");
+						$("#sname").css("color","red");
+						$("#spassword").text("");
+						}
+		else{
+		var name= $("#name").val();
+			$.ajax({
+				type:"get",
+				url:"/util/checkName",
+				data:{
+					"name":name,
+					},
+				dataType: "text",
+				async : false,
+				success:function(data){
+					if(data=="true"){  
+					//<!--alert("hh")-->
+						$("#sname").text(" * 用户名已经存在");
+						$("#sname").css("color","red");
+						$("#spassword").text("");
+					}
+					else{
+					//alert("hh1")
+					    $("#sname").text(" * 用户名可用");
+						$("#sname").css("color","green");
+						$("#spassword").text("");
+						ss=false;
+					}
+				}
+			});
+		}
+		return ss;
+	}
+	function login() {
+		window.location.href="login";
+	}
+	
+	</script>
+</html>

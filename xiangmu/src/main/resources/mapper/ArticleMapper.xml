@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ArticleDao">
+<!--这里做的是查询所有的个数，准备用来做分页的 -->
+      <select id="getArticleByid" resultType="Article">
+          select * from article where wid=#{id}
+     </select>
+     <select id="addArticleByPid" resultType="Article">
+          insert into article(wid,head,text,pictureAddress,heatNumber) values(#{wid},#{head},#{text},#{pictureAddress},#{heatNumber}) 
+     </select>
+     <select id="removeByArticleid">
+     	delete from article where id=#{id} 
+     </select>
+     <select id="selectOneArticleByid" resultType="Article">
+         select * from article where id=#{id}
+     </select>
+     <select id="UpdataOneArticleByid">
+           update  article set  head=#{head},text=#{text},pictureAddress=#{pictureAddress}  where id=#{id}
+     </select>
+     <select id="UpdataOneArticleByid1">
+           update  article set  head=#{head},text=#{text}  where id=#{id}
+     </select>
+     
+</mapper>

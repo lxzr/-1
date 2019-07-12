@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+     <link rel="shortcut icon" href="./topjui//images/favicon.ico"/>
+    <link rel="stylesheet" href="./static1/plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./static1/plugins/font-awesome/css/font-awesome.min.css">
+   <style type="text/css">
+        html, body {
+            height: 100%;
+        }
+
+        .box {
+            background: url("topjui/images/loginBg.jpg") no-repeat center center;
+            background-size: cover;
+
+            margin: 0 auto;
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            position: absolute;
+            top: 50%;
+
+            margin-top: -200px;
+            /*设置负值，为要定位子盒子的一半高度*/
+
+        }
+
+        @media screen and (min-width: 500px) {
+            .login-box {
+                left: 50%;
+                /*设置负值，为要定位子盒子的一半宽度*/
+                margin-left: -250px;
+            }
+        }
+
+        .form {
+            width: 100%;
+            max-width: 500px;
+            height: 275px;
+            margin: 2px auto 0px auto;
+        }
+
+        .login-content {
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            height: 250px;
+            width: 100%;
+            max-width: 500px;
+            background-color: rgba(255, 250, 2550, .6);
+            float: left;
+        }
+
+        .input-group {
+            margin: 30px 0px 0px 0px !important;
+        }
+
+        .form-control,
+        .input-group {
+            height: 40px;
+        }
+
+        .form-actions {
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 0px !important;
+        }
+
+        .login-title {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            padding: 20px 10px;
+            background-color: rgba(0, 0, 0, .6);
+        }
+
+        .login-title h1 {
+            margin-top: 10px !important;
+        }
+
+        .login-title small {
+            color: #fff;
+        }
+
+        .link p {
+            line-height: 20px;
+            margin-top: 30px;
+        }
+
+        .btn-sm {
+            padding: 8px 24px !important;
+            font-size: 16px !important;
+        }
+
+        .flag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #fff;
+            font-weight: bold;
+            font: 14px/normal "microsoft yahei", "Times New Roman", "宋体", Times, serif;
+        }
+    </style>
+</head>
+
+
+<body>
+<div class="box">
+    <div class="login-box">
+        <div class="login-title text-center">
+            <span class="flag"><i class="fa fa-user"></i> 用户登陆</span>
+            <h1>
+                <small>新闻系统管理系统</small>
+            </h1>
+        </div>
+        <div class="login-content ">
+            <div class="form">
+                <form id="modifyPassword" class="form-horizontal" action="#" method="post">
+                    <input type="hidden" id="referer" name="referer" value="${param.referer}">
+                    <div class="form-group">
+                        <div class="col-xs-10 col-xs-offset-1">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                                <input type="text" id="name" name="username" class="form-control" placeholder="用户名"
+                                       value="" style="border-right:none">
+                                       <span id="sname"  class="input-group-addon" style="font-size: 10px;width:100px;background-color:#fff;border:none; padding-bottom: 0px; padding-left: 0px;padding-right: 0px; padding-top: 0px;"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-10 col-xs-offset-1">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span>
+                                </span>
+                                <input type="password" id="password" name="password" class="form-control"
+                                       placeholder="密码" value="" style="border-right:none">
+                                       <span id="spassword" class="input-group-addon" style="font-size: 10px;width:100px;background-color:#fff;border:none; padding-bottom: 0px; padding-left: 0px;padding-right: 0px; padding-top: 0px;"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-10 col-xs-offset-1">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span>
+                                </span>
+                                <input type="password" id="rpassword" name="password" class="form-control"
+                                       placeholder="确认密码" value="" style="border-right:none">
+                                       <span id="spassword1" class="input-group-addon" style="font-size: 10px;width:100px;background-color:#fff;border:none; padding-bottom: 0px; padding-left: 0px;padding-right: 0px; padding-top: 0px;"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-actions">
+                        <div class="col-xs-12 text-center">
+                            <button type="button" id="" class="btn btn-sm btn-success" onclick="register()">
+                                <span class="fa fa-check-circle"></span> 注册
+                            </button>
+                            <button type="button" id=""  class="btn btn-sm btn-success" onclick="login()">
+                                <span class="fa fa-check-circle"></span> 返回
+                            </button>
+             
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</body>
+
+<script type="text/javascript">
+function register() {
+         var str1=checkName();
+        // alert(str1)
+        var name = document.getElementById("name").value;
+        var password = document.getElementById("password").value;
+        var rpassword = document.getElementById("rpassword").value;
+        var sname = document.getElementById("sname");
+		var spassword = document.getElementById("spassword");
+		var spassword1 = document.getElementById("spassword1");
+        if (name == "" | name == null | name == undefined) {
+            sname.innerText = "用户名不能为空";
+            spassword.innerText = "";
+            $("#sname").css("color","red");
+            spassword1.innerText = "";
+        }else if(password == "" | password == null | password == undefined){
+            sname.innerText = "";
+            spassword.innerText = "密码不能为空";
+            spassword1.innerText = "";
+           $("#spassword").css("color","red");
+        }else if(rpassword == "" | rpassword == null | rpassword == undefined){
+            sname.innerText = "";
+            spassword1.innerText = "密码不能为空";
+              
+           $("#spassword1 ").css("color","red");
+        }else if(rpassword!=password){
+            sname.innerText = "";
+            spassword1.innerText = "两次密码不相同";
+            $("#spassword1").css("color","red");
+        }else if(str1){
+                       $("#sname").text(" * 用户名已经存在");
+						$("#sname").css("color","red");
+						$("#spassword").text("");
+          }
+        else {
+            	 sname.innerText = "";
+            	 spassword.innerText = "";
+            	 spassword1.innerText = "";
+         		 $.ajax({
+						type : "get",
+						url : "/util/saveUser",
+						data: {
+				  		  "name":name,
+						  "password":password,
+							},
+	      				dataType: "text",
+		  				success:function(data){
+		    			  if(data=="true"){
+                       		 alert("注册成功")
+                      	window.location.href="login"; 
+                      		
+                  			}
+                 		 else{
+                    			 alert("发生未知错误") ;
+                    			  location.reload(true);
+                  			}
+		 				}
+		 			});  
+		 			
+		 		 
+        	}
+  }
+ 
+//查看名字是否可用
+  $("#name").on("blur",checkName)
+function checkName(){
+		//alert("nihao");
+	    var ss=true;
+		if($("#name").val()==null|$("#name").val()==""){
+		             $("#sname").text(" * 用户名不能为空");
+						$("#sname").css("color","red");
+						$("#spassword").text("");
+						}
+		else{
+		var name= $("#name").val();
+			$.ajax({
+				type:"get",
+				url:"/util/checkName",
+				data:{
+					"name":name,
+					},
+				dataType: "text",
+				async : false,
+				success:function(data){
+					if(data=="true"){  
+					//<!--alert("hh")-->
+						$("#sname").text(" * 用户名已经存在");
+						$("#sname").css("color","red");
+						$("#spassword").text("");
+					}
+					else{
+					//alert("hh1")
+					    $("#sname").text(" * 用户名可用");
+						$("#sname").css("color","green");
+						$("#spassword").text("");
+						ss=false;
+					}
+				}
+			});
+		}
+		return ss;
+	}
+	function login() {
+		window.location.href="login";
+	}
+	
+	</script>
+</html>

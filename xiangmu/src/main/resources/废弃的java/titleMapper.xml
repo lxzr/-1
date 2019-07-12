@@ -1,0 +1,37 @@
+<!-- <?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.TitleDao">
+     <insert id="addHeader1">
+        insert into title(pid,text) values(#{pid},#{text})
+    </insert>
+  
+     <select id="getTitle" resultMap="TitleLogin">
+         select 
+         t1.id as t1id,
+         t1.pid as t1pid,
+         t1.text  as t1text,
+         t2.id as t2id,
+         t2.pid as t2pid,
+         t2.text  as t2text
+         from 
+         (  select * from  title where pid=#{id}) as t1
+         left outer join
+         (  select * from  title) as t2
+          on t1.id=t2.pid;
+         
+        
+    </select>
+   <resultMap id="TitleLogin" type="com.pojo.Title">
+        <result property="id" column="t1id"/>
+        <result property="pid" column="t1pid"/>
+        <result property="text" column="t1text"/>
+        <association property="children" resultMap="smallheadMap"/>
+    </resultMap>
+    <resultMap id="smallheadMap" type="com.pojo.Title">
+        <result property="id" column="t2id"/>
+        <result property="pid" column="t2pid"/>
+        <result property="text" column="t2text"/>
+    </resultMap>
+</mapper> -->

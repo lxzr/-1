@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+	<meta charset="UTF-8">
+	<title>Basic Tree - jQuery EasyUI Demo</title>
+	<link rel="stylesheet" type="text/css" href="jquery-easyui-1.7.0/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="jquery-easyui-1.7.0/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="jquery-easyui-1.7.0/demo/demo.css">
+	<link rel="stylesheet" type="text/css" href="zTree_v3/css/zTreeStyle/zTreeStyle.css">
+	<script type="text/javascript" src="jquery-easyui-1.7.0/jquery.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="zTree_v3/js/jquery.ztree.all.js"></script>
+	
+	<style type="text/css">
+ .pagination .pagination-num
+
+        {
+			text-align: center;
+            width: 40px;
+			height: 20px;
+			padding-top: 5px;
+        }
+
+
+	 </style>
+
+
+</head>
+<body>
+	<div style="width:100%;height:700px;padding: 5px,0px;background-color: none;">
+			<!-- 左边的div -->
+		<div style="width:26%;height:100%;background-color:none;float: left;border: 1px solid black;">
+		<!-- 展示ztree效果 :发送ajax请求获取简单json数据构造ztree-->
+		<!-- //这里是先添加的一个按钮去刷新页面。现在不需要了 -->
+				<!-- <div>
+					<button id="herder1" onclick="frsh()">
+						<a herf="">显示所有顶级header</a>
+					</button>
+				</div>
+				<script type="text/javascript">
+							function frsh(){
+								window.location.reload();
+							}
+				</script> -->
+		<ul id="ztree3" class="ztree" style="font-size:90px"></ul>
+				<script type="text/javascript">
+				var setting3 = {
+							   view:{
+								  // dblClickExpand: false,
+								  fontCss : {'font-weight':'bold','color':'black',}
+							   },
+
+								data: {
+									simpleData: {
+										enable: true//使用简单json数据构造ztree节点
+									}
+								},
+								callback: {
+									//为ztree节点绑定单击事件
+									///refreshNode:refreshNode,
+									onClick: function(event, treeId, treeNode){
+										lx(treeNode.id);
+										//oneClick();
+									}
+								}
+						}
+					// function oneClick(e,treeId, treeNode) {
+					// 	var zTree = $.fn.zTree.getZTreeObj("ztree3");
+					// 	zTree.expandNode(treeNode);
+					// 	}
+					$(function(){
+						 lx();//给定一个初始值为0
+						//发送ajax请求，获取json数据
+						//jQuery提供 的ajax方法：ajax、post、get、load、getJSON、getScript
+						 reloadTree();
+					
+					});
+					function reloadTree(){
+						var url = "getHeader";
+						$.getJSON(url,{},function(data){
+							//调用API初始化ztree
+							// alert(data)
+							$.fn.zTree.init($("#ztree3"), setting3, data);
+							fixIcon();
+							findFatherTreeAndFalsh();
+						},'json');
+					
+
+					}
+					//调用修复图标的方法。方法如下：
+
+					//修正zTree的图标，让文件节点显示文件夹图标
+					function fixIcon(){
+						var treeObj = $.fn.zTree.getZTreeObj("ztree3");//获取这个节点
+						
+						var nodes = treeObj.getNodes();//所有父节点
+						// var nodes = treeObj.transformToArray(Node)
+  						for(var i=0;i<nodes.length;i++){
+							//    console.log("nihao")
+							//   alert(nodes[i].pId)
+  								if(nodes[i].pId==null){
+									  
+									nodes[i].isParent = true;
+								  }
+						}
+						treeObj.refresh();//调用api自带的refresh函数。
+				
+					}
+				</script>
+		</div>
+		<!-- 左边的div -->
+		<!-- 右边的div -->
+		<div style="width:74%;height:100%;background-color:none;float: left;border: 1px solid black;border-left: none;">
+	
+            
+		<table id="mytable" style="width:100%;background-color: red;margin-left: 0px"></table>
+
+	
+				<!-- 增加的弹层是 添加功能的window-->
+	<div class="easyui-window" title="对header进行添加" id="addHeaderWindow" collapsible="false" minimizable="false" maximizable="false" style="top:20px;left:200px">
+		<div region="north" style="height:31px;overflow:hidden;" split="false" border="false" >
+			<div class="datagrid-toolbar">
+				<a id="save" onclick="addHeaderByPid()" icon="icon-save" href="#" class="easyui-linkbutton" plain="true" >提交</a>
+			</div>
+		</div>
+		
+		<div region="center" style="overflow:auto;padding:5px;" border="false">
+			<form id="addHeaderForm"  method="post">
+				<table class="table-edit" width="80%" align="center">
+					<tr class="title">
+						<td colspan="2">header信息</td>
+					</tr>
+					<tr>
+						<td>头信息</td>
+						<td><input  onkeydown="OnTextChanged()"  id="headerim" type="text" name="name" class="easyui-validatebox" required="true"/></td>
+					</tr>
+					</table>
+			</form>
+		</div>
+	</div>
+	<!-- 增加的弹层是 修改功能的window-->
+		<div class="easyui-window" title="对header进行修改" id="changeHeaderWindow" collapsible="false" minimizable="false" maximizable="false" style="top:20px;left:200px">
+		<div region="north" style="height:31px;overflow:hidden;" split="false" border="false" >
+			<div class="datagrid-toolbar">
+				<a id="change" onclick="changeHeader()" icon="icon-save" href="#" class="easyui-linkbutton" plain="true"  >提交</a>
+			</div>
+		</div>
+		
+		<div region="center" style="overflow:auto;padding:5px;" border="false">
+			<form id="changeHeaderForm"  method="post" @submit.native.prevent>
+				<table class="table-edit" width="80%" align="center">
+					<tr class="title">
+						<td colspan="2">header信息</td>
+					</tr>
+					<tr>
+						<td>头信息</td>
+						<td><input onkeydown="if(event.keyCode==13){event.keyCode=0;event.returnValue=false;}" id="changeheaderim" type="text" name="input1" class="easyui-validatebox" required="true" /></td>
+					</tr>
+					</table>
+			</form>
+		</div>
+	</div>
+	<!-- 增加的弹层是 修改功能的window-->
+		 </div>
+		 <!-- 右边的div -->
+		
+					<script type="text/javascript" language="javascript">
+					function OnTextChanged() {
+						if (event.keyCode == 13) {//判断是否为回车键，Event是window对象的一个属性，是全局的。
+							event.keyCode = 0;//屏蔽回车键
+							event.returnValue = false;
+							//alert("Hello world!");
+						}
+					}
+					</script>
+
+
+		 <!-- 最大的div -->
+		</div> 
+		<script type="text/javascript">
+			$(function(){
+					$('#addHeaderWindow').window({
+								title: '添加标题',
+								width: 400,
+								modal: true,//遮罩效果
+								shadow: true,//阴影效果
+								closed: true,//关闭
+								height: 400,
+								resizable:false
+	    		});
+			})
+			$(function(){
+					$('#changeHeaderWindow').window({
+								title: '添加标题',
+								width: 400,
+								modal: true,//遮罩效果
+								shadow: true,//阴影效果
+								closed: true,//关闭
+								height: 400,
+								resizable:false
+								
+	   		 });
+			})
+		</script>
+		
+<!-- 一个add函数用于表单提交 -->
+			<script type="text/javascript">
+				
+			</script>
+<!-- 一个add函数用于表单提交 -->
+		<!-- ：使用easyUI提供的API创建datagrid -->
+		<script type="text/javascript">
+		
+		function zr(id){
+
+			//页面加载完成后，创建数据表格datagrid
+			$("#mytable").datagrid({
+				//定义标题行所有的列
+				columns:[
+					   [
+				          {title:'编号',field:'id',checkbox:true,width : 120,align : 'center'},
+				          //{title:'父id',field:'pId',width : 80,align : 'center'},
+				          {title:'标题',field:'name',width : 120,align : 'center'},
+				          {title:'修改时间',field:'publishTime',width : 200,align : 'center'}
+						  ]
+						],
+				//指定数据表格发送ajax请求的地址
+				url:"/getHeaderByPid?id="+id,
+				rownumbers:true,				
+				//singleSelect:true,
+				//定义工具栏
+				toolbar:[ 
+				         {text:'添加',iconCls:'icon-add',width : 120,left : 100,
+				        	 //为按钮绑定单击事件
+				        	 handler:function(){
+								//增加Header功能
+								$('#addHeaderWindow').window("open")				        	 
+				         	 }
+				         },
+						 {text:'删除',iconCls:'icon-remove',width : 120,
+						   handler:function(){
+							  removeHeaderByid();
+				         	 }
+						},
+						 {text:'修改',iconCls:'icon-edit',width : 120,
+						 handler:function(){
+							
+							  changeHeaderByid();
+				         	 }
+						},
+				        //  {text:'查询',iconCls:'icon-search'}
+				         ],
+				//显示分页条
+				pagination:true,
+				fit:true ,
+				// pageList:[3,5,7,10,15],
+				// beforePageText: '第',//页数文本框前显示的汉字  
+				// afterPageText: '页    共 {pages} 页',                
+				// displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+			
+			});
+			 var p = $('#mytable').datagrid('getPager');   
+			    $(p).pagination({             
+ 					//pageSize: 10,//每页显示的记录条数，默认为10        
+  					 pageList:[3,5,7,10,15],//可以设置每页记录条数的列表         
+					beforePageText: '第',//页数文本框前显示的汉字 
+				    //PageText:,
+					afterPageText: '页    共 {pages} 页',      
+					  displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录', 
+					 
+		          });
+
+	
+		};
+		
+		</script>
+		<!-- ：使用easyUI提供的API创建datagrid -->
+
+		<script>
+			var id=0;
+			function changeHeaderByid(){//这只是打开window窗口，并且去后台取回数据返回到页面上面
+					  //$('#changeHeaderWindow').window("open")
+					  // alert("修改")
+					var rows = $("#mytable").datagrid("getSelections");
+					if(rows.length != 1){
+					//没有选中记录，弹出提示
+					$.messager.alert("提示信息","请选择需要修改的单个header！","warning");
+					}
+						
+					else{
+								$('#changeHeaderWindow').window("open")
+								var staff = rows[0];//json对象
+								 id = staff.id;
+								// alert(id)
+										$.ajax({
+												url:"selectone",
+												type:"post",
+												dataType:"text",
+												data:{
+													id:id,								
+												},
+												success:function (data) {
+													// alert(data)
+													
+												 changeHeader1(data)
+												
+											   }
+										})
+										
+					
+				}
+				//  refreshNodeTree(id1);//未实现
+				//  refreshParentNodeTree(id1);
+			}
+			//这里是将返回来的数据动态展示给页面
+			function changeHeader1(data){//这里是将返回来的数据动态展示给页面
+				// alert(data)
+				// var header=$("#changeheaderim").val();
+				//header="nihao";
+				var data1=JSON.stringify(data);
+				 //$("input[name=input1]").val(header);
+				//  alert(data1)
+				 $("#changeheaderim").val(data);
+				//  alert($("#changeheaderim").val())
+			}
+
+			//这里是对header的改变
+			function changeHeader(){//这里是对header的改变，的按钮提交函数
+				var header=$("#changeheaderim").val()
+				if(header==null|header==undefined|header==""){
+						$.messager.alert("提示信息","请输入内容！","warning");
+				}
+				else
+				{
+
+							$.ajax({
+									url:"changeHeaderByid",
+									type:"post",
+								dataType:"text",
+									data:{
+										id:id,
+										header:header								
+									},
+						success:function (data) {
+							$('#changeHeaderWindow').window("close")
+					var options = $("#mytable" ).datagrid("getPager").data("pagination").options;
+			      var pnum = options.pageNumber;
+					/*当页刷新，必须和上面的一起用*/
+				   $("#mytable" ).datagrid('reload'); 
+						//refreshNode();
+						 reloadTree();
+
+						 //findFatherTreeAndFalsh();
+											}
+													})
+				}
+			}
+		</script>
+		
+		 <!-- 这里写一个函数去获取点击tree的id，并且传给url -->
+		 <script type="text/javascript">
+
+	     var id1=0;
+		 //因为这里有点击的id即id1我们要靠它去刷新ztree并且获取到当前id被点击展开
+		 function  lx(id) {
+			 if(id==""|id==null|id==undefined){
+				 id=0;
+			 }else{
+                  id=id;
+			 }
+			 id1=id;
+					// alert(id);
+					zr(id)
+					return id;
+			};
+		//节点已经刷新但是我们要让先前被点击的那个节点再次被点击并且展开
+				 function findFatherTreeAndFalsh(){
+					// var nodeslx;
+					// //alert("nihao")
+  					 
+					// 	var treeObj = $.fn.zTree.getZTreeObj("ztree3");
+     				// //  var   type = "refresh";
+					// // 	var   silent = false; //获取这个节点		
+					// 	 var node = treeObj.getNodes();//所有父节点
+					// 	 var nodes = treeObj.transformToArray(node);
+		  			//  for(var i=0;i<nodes.length;i++){
+                    // 		 if(nodes[i].id==id1){
+					// 		//  alert(id)
+					// 		nodeslx=treeObj.transformToArray(nodes[i]);
+					// 	 }
+					// 	  }
+					//alert("nihao")
+				var treeObj = $.fn.zTree.getZTreeObj("ztree3");
+				var node = treeObj.getNodeByParam("id",id1);
+				
+				treeObj.cancelSelectedNode();
+				treeObj.selectNode(node,true);//指定选中ID的节点
+				treeObj.expandNode(node,true,false);
+				//alert(id1);
+								//alert(node.id);
+				 }
+				 
+
+
+
+			// <!-- 这里写一个函数addHeaderByPid进行ajax请求， -->
+		 function addHeaderByPid(){//按钮添加函数
+				// alert(id1);
+				var Header=document.getElementById("headerim").val
+				//  alert($("headerim").value);
+				// alert(Header)
+		if($("#headerim").val()!=null&&$("#headerim").val()!=undefined&&$("#headerim").val()!=""){
+			$.ajax({
+                url:"addHeaderByPid",
+                type:"post",
+                dataType:"text",
+                data:{
+					id:id1,
+                	Header:$("#headerim").val()
+                },
+                success:function (data) {
+					// $("#changeheaderim").val(data);
+					$("#headerim").val("");
+                    $('#addHeaderWindow').window("close")
+					 //window.location.reload();
+					 var options = $("#mytable" ).datagrid("getPager").data("pagination").options;
+                     var pnum = options.pageNumber;
+						/*当页刷新，必须和上面的一起用*/
+						$("#mytable" ).datagrid('reload'); 
+						// refreshNode();
+						reloadTree();
+                }
+               })
+				}
+				//refreshNodeTree(id1);
+				
+				}
+				//删除功能
+				 function removeHeaderByid(){
+					// alert("删除")
+					var rows = $("#mytable").datagrid("getSelections");
+					if(rows.length == 0){
+					//没有选中记录，弹出提示
+					$.messager.alert("提示信息","请选择需要删除的header！","warning");
+						}
+						else{
+									//选中了,弹出确认框
+									$.messager.confirm("删除确认","你确定要删除选中的header吗？",function(r){
+										if(r){
+											
+											var array = new Array();
+											//确定,发送请求
+											for(var i=0;i<rows.length;i++){
+												var staff = rows[i];//json对象
+												var id = staff.id;
+												array.push(id);
+											}
+											var ids = array.join(",");//1,2,3,4,5
+										$.ajax({
+														url:"removeHeaderByid",
+														type:"post",
+														dataType:"text",
+														data:{
+															ids:ids,								
+														},
+														success:function (data) {
+															//$('#addHeaderWindow').window("close")
+															//window.location.reload();
+															var options = $("#mytable" ).datagrid("getPager").data("pagination").options;
+															var pnum = options.pageNumber;
+																/*当页刷新，必须和上面的一起用*/
+																$("#mytable" ).datagrid('reload'); 
+																reloadTree();
+														}
+													})
+											
+
+										
+											// location.href = "removeHeaderByid?ids="+ids;
+											/**
+											$.post("staffAction_deleteBatch.action",{"ids":ids},function(data){
+												alert(data);
+											});
+											**/
+										}
+									});
+
+						}
+				 }
+				 //树节点的刷新功能
+				// function refreshNodeTree(id1) { 
+				// 	var nodeslx;
+				// 	//alert("nihao")
+  					 
+				// 		var treeObj = $.fn.zTree.getZTreeObj("ztree3");
+     			// 	 var   type = "refresh";
+				// 		var   silent = false; //获取这个节点		
+				// 		 var node = treeObj.getNodes();//所有父节点
+				// 		 var nodes = treeObj.transformToArray(node);
+		  		// 	 for(var i=0;i<nodes.length;i++){
+                //     		 if(nodes[i].id==id){
+				// 			//  alert(id)
+				// 			nodeslx=treeObj.transformToArray(nodes[i]);
+				// 		 }
+				// 		  }
+				// 		//window.location.reload();  			
+				// //treeObj.checkNode(nodeslx, true)
+  				// /*强行异步加载父节点的子节点。[setting.async.enable = true 时有效]*/
+  				// treeObj.reAsyncChildNodes(nodeslx, type, silent); 
+  				// //alert("nihao1")
+ 				// } 
+ /** 
+  * 刷新当前选择节点的父节点 
+//   */
+//  function refreshParentNodeTree(id1) { 
+//   var zTree = $.fn.zTree.getZTreeObj("ztree3"), 
+//   type = "refresh", 
+//   silent = false, 
+//   nodes = zTree.getSelectedNodes(); 
+//   /*根据 zTree 的唯一标识 tId 快速获取节点 JSON 数据对象*/
+
+//   var parentNode = zTree.getNodeByTId(nodes[id1]); 
+//   /*选中指定节点*/
+//   zTree.selectNode(parentNode); 
+//   zTree.reAsyncChildNodes(parentNode, type, silent); 
+//  }
+
+		 </script>
+		 <!-- 这里写一个函数去获取点击tree的id，并且传给url -->
+
+      <!-- 这里是一个弹出框 -->
+      <!-- <script type="text/javascript">
+					$(function(){
+          $.messager.alert("标题","内容","warning");})//error、question、info、warning。
+		</script> -->
+	<!-- 这里是一个弹出框 -->
+	<!-- <script>
+	$(function(){   
+		 $('#txtKey').bind('keypress',function(event){    
+				 if(event.keyCode == "13"){   
+					changeHeader();
+							}    
+			});
+		});
+	</script> -->
+
+	
+
+</body>
+</html>

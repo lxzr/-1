@@ -1,0 +1,47 @@
+
+<script type="text/javascript">
+    $(function () {
+        $('#dlg').dialog({
+            title: '对话框',
+            iconCls:"icon-edit",
+            collapsible: true,
+            minimizable: true,
+            maximizable: true,
+            resizable: true,
+            width: 300,
+            height: 200,
+            modal: true,
+            text:'Save',
+            href: "Content.aspx",
+            onClose: function () {
+                alert("Close");
+            },
+            toolbar: [{
+                text: 'Add',
+                iconCls: 'icon-add',
+                handler: function () {
+                    alert('add');
+                }
+            }, '-', {
+                text: 'Save',
+                iconCls: 'icon-save',
+                handler: function () {
+                    alert('save');
+                }
+            }],
+            buttons: [{
+                text: 'Ok',
+                iconCls: 'icon-ok',
+                handler: function () {
+                    alert('ok');
+                }
+            }, {
+                text: 'Cancel',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $('#dlg').dialog('close');
+                }
+            }]
+        });
+    });
+</script>

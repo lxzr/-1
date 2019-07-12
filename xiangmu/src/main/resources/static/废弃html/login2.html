@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <style type="text/css">
+    body{
+			margin: 0;
+		
+		    }
+     *{
+		    	padding: 0;
+		    	margin: 0;
+		    }
+    .d1{
+    height:80px;
+    width:380px;
+    margin-top:10px;
+    text-align: center;
+    }
+    .d2{
+    height:25px;
+    width:200px;
+    margin-top:10px;
+    text-align: left;
+    float:left;
+    padding-left:60px;
+    }
+    .d3{
+    height:80px;
+    width:100px;
+    margin-top:10px;
+    text-align: left;
+    float:right;
+    }
+     .in1{
+      height:25px;
+     width:150px;
+     }
+</style>
+</head>
+
+<body>
+<div style="height:800px;width:100%; background: url("topjui/images/loginBg.jpg") no-repeat center center;backgroun-size:100% 100%;">
+   <div style="height:400px;width:400px;margin: 0 auto;position: absolute;top:200px;left:600px;background-color: darkgray;">
+           <div class="d1"><span style="color: white;font-size: 30px;">新闻系统信息管理平台</span></div>
+           <div class="d1">
+            <div class="d2"><span style="color: white;">姓名</span><input id="name" class="in1"/></div>
+            <div class="d3"><span id="sname" style="font-size: 10px;"></span></div>
+            </div>
+           <div class="d1">
+           <div class="d2"><span style="color: white;">密码</span><input type="password" id="password" class="in1"/></div>
+           <div class="d3"><span id="spassword" style="font-size: 10px;"></span></div>
+           </div>
+           <div class="d1" style="text-align:left;">
+           <div style="  height:80px;width:180px;margin-left:60px;text-align: center;">
+           <button style="display: inline-block;color: white;maigin-left:20px;background-color:green;font-size: 20px;" onclick="login()">登录</button>
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button style="display: inline-block;color: white;maigin-left:20px;background-color:red;font-size: 20px;maigin-left:20px;"onclick="register()">注册</button></div>
+  			</div>
+   </div>
+</div>
+</body>
+<script type="text/javascript">
+ function login() {
+        var name = document.getElementById("name").value;
+        var password = document.getElementById("password").value;
+        var sname = document.getElementById("sname");
+		var spassword = document.getElementById("spassword");
+        if (name == "" | name == null | name == undefined) {
+            sname.innerText = "用户名不能为空";
+            spassword.innerText = "";
+            $("#sname").css("color","red");
+        }else if(password == "" | password == null | password == undefined){
+            sname.innerText = "";
+            spassword.innerText = "密码不能为空";
+           $("#spassword").css("color","red");
+        }else {
+            	 sname.innerText = "";
+            	 spassword.innerText = "";
+         		 $.ajax({
+						type : "get",
+						url : "/util/checkUser",
+						data: {
+				  		  "name":name,
+						  "password":password,
+							},
+	      				dataType: "text",
+		  				success:function(data){
+		    			  if(data=="true"){
+                       		 alert("登录成功")
+                      		 window.location.href="manage";   
+                  			}
+                 		 else{
+                    			 $("#spassword").text("密码或者用户名出错");
+                     			 $("#spassword").css("color","red");
+                  			}
+		 				}
+		 			});  
+        	}
+  }
+ 
+  //查看名字是否可用
+  $("#name").on("blur",checkName)
+function checkName(){
+		//alert("nihao");
+		var str1 = "";
+		var name= $("#name").val();
+			$.ajax({
+				type:"get",
+				url:"/util/checkName",
+				data:{
+					"name":name,
+					},
+				dataType: "text",
+				success:function(data){
+					if(data=="true"){  
+					//<!--alert("hh")-->
+						$("#sname").text(" * 用户名可用");
+						$("#sname").css("color","green");
+						$("#spassword").text("");
+						
+					}
+					else{
+					//alert("hh1")
+					    $("#sname").text(" * 用户名不存在");
+						$("#sname").css("color","red");
+						$("#spassword").text("");
+						
+					}
+				}
+			});
+	
+	}
+	
+function checkUser(){
+ var str = "";
+ var name= $("#name").val();
+ var password = document.getElementById("password").value;
+			$.ajax({
+				type:"get",
+				url:"/util/checkUser",
+				data:{
+					"name":name,
+					"password":password,
+					},
+				dataType: "text",
+				success:function(data){
+				 str=data;
+				 }
+			});
+			return str;
+  }
+
+  function register() {
+		window.location.href="register";
+	}
+</script>
+</html>

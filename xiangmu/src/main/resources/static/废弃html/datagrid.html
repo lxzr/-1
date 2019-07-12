@@ -1,0 +1,46 @@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html style="width:100%;height:100%;">
+<head>
+    <meta charset=" utf-8">
+<title>快递管理</title>
+<link href="jquery-easyui-1.7.0/themes/default/easyui.css" rel="stylesheet" />
+<link href="jquery-easyui-1.7.0/themes/icon.css" rel="stylesheet" />
+<link href="jquery-easyui-1.7.0/demo/demo.css" rel="stylesheet" />
+<script src="jquery-easyui-1.7.0/jquery.min.js"></script>
+<script src="jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
+<script src="jquery-easyui-1.7.0/src/jquery.parser.js"></script>
+
+</head>
+<body class="easyui-layout">
+    <div>
+        <div title="未处理订单" data-options="iconCls:'icon-help',closable:true" style="overflow:hidden;padding:5px;height:500px;">
+            <table id="dg" class="easyui-datagrid" title="订单列表" style="width:auto;height:auto;"
+                   data-options=" url:'/ExpressManage/SelectAllNoHandleKuaidi',
+                            rownumbers:true,
+                            singleSelect:false,
+                            fit:true,
+                            autoRowHeight:false,
+                            pagination:true,
+                            toolbar:toolbar,
+                            pageSize:10">
+                <thead>
+                    <tr>
+                        <th data-options="field:'ck',checkbox:true"></th>
+                        <th data-options="field:'UserID',sortable:true,width:100">用户名</th>
+                        <th data-options="field:'KuaidiType',sortable:true,width:100">快递类型</th>
+                        <th data-options="field:'PhoneNum',sortable:true,width:100">联系电话</th>
+                        <th data-options="field:'RequestTiime',sortable:true,width:100">发布时间</th>
+                        <th data-options="field:'Address',sortable:true,width:100">送货地址</th>
+                        <th data-options="field:'Remark',sortable:true,width:100">备注</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+	<meta charset="UTF-8">
+	<title>Basic Tree - jQuery EasyUI Demo</title>
+	<link rel="stylesheet" type="text/css" href="jquery-easyui-1.7.0/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="jquery-easyui-1.7.0/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="jquery-easyui-1.7.0/demo/demo.css">
+	<link rel="stylesheet" type="text/css" href="zTree_v3/css/zTreeStyle/zTreeStyle.css">
+	<script type="text/javascript" src="jquery-easyui-1.7.0/jquery.min.js"></script>
+	<script type="text/javascript" src="jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="zTree_v3/js/jquery.ztree.all.js"></script>
+	
+	 
+	<style type="text/css">
+ .pagination .pagination-num
+
+        {
+			text-align: center;
+            width: 40px;
+			height: 20px;
+			padding-top: 5px;
+        }
+
+
+	 </style>
+
+
+
+</head>
+<body>
+	<div style="width:100%;height:700px;padding: 5px,0px;background-color: none;">
+			<!-- 左边的div -->
+		<div style="width:26%;height:100%;background-color:none;float: left;border: 1px solid black;">
+		<!-- 展示ztree效果 :发送ajax请求获取简单json数据构造ztree-->
+			
+		<ul id="ztree3" class="ztree" style="font-size:50px"></ul>
+				<script type="text/javascript">
+					$(function(){
+						//lx();
+						//页面加载完成后，执行这段代码----动态创建ztree
+						var setting3 = {
+							   view:{
+								  fontCss : {'font-weight':'bold','color':'black',}
+							   },
+
+								data: {
+									simpleData: {
+										enable: true//使用简单json数据构造ztree节点
+									}
+								},
+								callback: {
+									//为ztree节点绑定单击事件
+									
+									onClick: function(event, treeId, treeNode){
+										lx(treeNode.id);
+										getOnclickid(treeNode.id);
+										
+									}
+								}
+						};
+						
+						//发送ajax请求，获取json数据
+						//jQuery提供 的ajax方法：ajax、post、get、load、getJSON、getScript
+						var url = "getHeader";
+						
+						$.getJSON(url,{},function(data){
+							//调用API初始化ztree
+							 //alert(data[0].id)
+							 //getTreeid(data[0].id);
+							$.fn.zTree.init($("#ztree3"), setting3, data);
+							fixIcon();
+							getTreeid();	
+						},'json');
+						
+					});
+					//调用修复图标的方法。方法如下：
+
+					//修正zTree的图标，让文件节点显示文件夹图标
+					function fixIcon(){
+						var treeObj = $.fn.zTree.getZTreeObj("ztree3");//获取这个节点
+						
+						var nodes = treeObj.getNodes();//所有父节点
+						// var nodes = treeObj.transformToArray(Node)
+  						for(var i=0;i<nodes.length;i++){
+							//    console.log("nihao")
+							//   alert(nodes[i].pId)
+  								if(nodes[i].pId==null){
+									  
+									nodes[i].isParent = true;
+								  }
+						}
+						treeObj.refresh();//调用api自带的refresh函数。
+				
+					}
+				</script>
+		</div>
+		<!-- 左边的div -->
+		<!-- 右边的div -->
+		<div style="width:74%;height:100%;background-color:none;float: left;border: 1px solid black;border-left: none;">
+			<table id="mytable"></table>
+			
+				<!-- 增加的弹层是 添加功能的window-->
+	<div class="easyui-window" title="对header进行添加" id="addArticle" collapsible="false" minimizable="false" maximizable="false" style="top:20px;left:200px">
+		<div region="north" style="height:31px;overflow:hidden;" split="false" border="false" >
+			<div class="datagrid-toolbar">
+				<a id="save" onclick="addArticleByPid()" icon="icon-save" href="#" class="easyui-linkbutton" plain="true" >提交</a>
+			</div>
+		</div>
+		
+		<div region="center" style="overflow:auto;padding:5px;" border="false">
+			<form id="addArticleForm"  method="post" enctype="multipart/form-data">
+				<table class="table-edit" width="80%" align="center" >
+					<tr class="title">
+						<td colspan="2">Article信息</td>
+					</tr>
+					<tr>
+						<td>标题</td>
+						<td><input  onkeydown="OnTextChanged()" id="head" type="text" name="name" class="easyui-validatebox" required="true"/></td>
+					</tr>
+					<tr>
+						<td>正文</td>
+						<td>
+							<textarea id="text"  type="text" rows="10" cols="30" class="easyui-validatebox" required="true"></textarea>
+							<!-- <input  onkeydown="OnTextChanged()" id="text" type="text" name="name" class="easyui-validatebox" required="true"/> -->
+						</td>
+					</tr>
+					<!-- <tr>
+						<td>图片上传</td>
+						<td>
+							<input  onkeydown="OnTextChanged()" id="picture" type="text" name="name" class="easyui-validatebox" required="true"/>
+						</td>
+					</tr> -->
+					  <tr>
+						<td>图片上传：</td>
+						<td><input onkeydown="OnTextChanged()"  type="file" name="myfiles" id="picture" >
+							<!-- onchange="showImage();" -->
+							<div id="localImag">
+							   <img id="preview"/>
+						    </div>							
+						</td>
+						
+					  </tr>
+
+						<!-- <tr>
+						<td>图片上传</td>
+						<td>
+							<input  onkeydown="OnTextChanged()" id="picture" type="file" name="uploadFile" required="true"/>
+							<img src="${image_path}" width="200" height="200">
+						</td>
+						</tr> -->
+					</table>
+			</form>
+		</div>
+	</div>
+	<!-- 增加的弹层是 添加功能的window-->
+	<!-- 显示上传的时候的图片 -->
+	<!-- <script type="text/javascript">
+	function showImage() {
+		var docObj = document.getElementById("picture");
+		var imgObjPreview = document.getElementById("preview");
+		if (docObj.files && docObj.files[0]) {
+			//火狐下，直接设img属性  
+			imgObjPreview.style.display='block';
+			imgObjPreview.style.width = '300px';
+			imgObjPreview.style.height = '120px';
+			//imgObjPreview.src = docObj.files[0].getAsDataURL();  
+			//火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式  
+			imgObjPreview.src = window.URL.createObjectURL(docObj.files[0]);
+		} else {
+			//IE下，使用滤镜  
+			docObj.select();
+			var imgSrc = document.selection.createRange().text;
+			var localImagId = document.getElementById("localImag");
+			//必须设置初始大小  
+			localImagId.style.width = "250px";
+			localImagId.style.height = "200px";
+			//图片异常的捕捉，防止用户修改后缀来伪造图片 
+			try {
+				localImagId.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale)";
+				localImagId.filters
+						.item("DXImageTransform.Microsoft.AlphaImageLoader").src = imgSrc;
+			} catch (e) {
+				alert("您上传的图片格式不正确，请重新选择!");
+				return false;
+			}
+			imgObjPreview.style.display = 'none';
+			document.selection.empty();
+		}
+		return true;
+	}
+</script>
+<script type="text/javascript">
+	function showImage1() {
+		var docObj = document.getElementById("picture1");
+		var imgObjPreview = document.getElementById("preview1");
+		if (docObj.files && docObj.files[0]) {
+			//火狐下，直接设img属性  
+			imgObjPreview.style.display='block';
+			imgObjPreview.style.width = '300px';
+			imgObjPreview.style.height = '120px';
+			//imgObjPreview.src = docObj.files[0].getAsDataURL();  
+			//火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式  
+			imgObjPreview.src = window.URL.createObjectURL(docObj.files[0]);
+		} 
+		else {
+			//IE下，使用滤镜  
+			docObj.select();
+			var imgSrc = document.selection.createRange().text;
+			var localImagId = document.getElementById("localImag");
+			//必须设置初始大小  
+			localImagId.style.width = "250px";
+			localImagId.style.height = "200px";
+			//图片异常的捕捉，防止用户修改后缀来伪造图片 
+			try {
+				localImagId.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale)";
+				localImagId.filters
+						.item("DXImageTransform.Microsoft.AlphaImageLoader").src = imgSrc;
+			} catch (e) {
+				alert("您上传的图片格式不正确，请重新选择!");
+				return false;
+			}
+			imgObjPreview.style.display = 'none';
+			document.selection.empty();
+		}
+		return true;
+	}
+</script> -->
+
+	<!-- 显示上传的时候的图片 -->
+
+	<!-- 增加的弹层是 修改功能的window-->	
+	<div class="easyui-window" title="对article进行修改" id="changeArticle" collapsible="false" minimizable="false" maximizable="false" style="top:20px;left:200px">
+		<div region="north" style="height:31px;overflow:hidden;" split="false" border="false" >
+			<div class="datagrid-toolbar">
+				<a id="" onclick="changeArticleByid()" icon="icon-save" href="#" class="easyui-linkbutton" plain="true" >提交</a>
+			</div>
+		</div>
+		
+		<div region="center" style="overflow:auto;padding:5px;" border="false">
+			<form id="addArticleForm"  method="post" enctype="multipart/form-data">
+				<table class="table-edit" width="80%" align="center" >
+					<tr class="title">
+						<td colspan="2">Article信息</td>
+					</tr>
+					<tr>
+						<td>标题</td>
+						<td><input  onkeydown="OnTextChanged()" id="head1" type="text" name="name" class="easyui-validatebox" required="true"/></td>
+					</tr>
+					<tr>
+						<td>正文</td>
+						<td>
+							<textarea id="text1"  type="text" rows="10" cols="30" class="easyui-validatebox" required="true"></textarea>
+							<!-- <input  onkeydown="OnTextChanged()" id="text1" type="text" name="name" class="easyui-validatebox" required="true"/> -->
+						</td>
+					</tr>
+					<tr>
+						<td>图片上传</td>
+						<td>
+							<input  onkeydown="OnTextChanged()" id="picture1" type="file" 
+							name="name" class="easyui-validatebox" required="true" />
+							<!-- onchange="showImage1()" -->
+							<div id="localImag1">
+							   <img id="preview1"/>
+						    </div>	
+						</td>
+					</tr>
+					</table>
+			</form>
+		</div>
+	</div>
+	<!-- 增加的弹层是 修改功能的window-->
+	
+		</div>
+		 <!-- 右边的div -->
+		 
+		 <!-- 最大的div -->
+		</div> 
+		<!-- 这里屏蔽input的回车事件的函数 -->
+		   <script type="text/javascript" language="javascript">
+					function OnTextChanged() {
+						if (event.keyCode == 13) {//判断是否为回车键，Event是window对象的一个属性，是全局的。
+							event.keyCode = 0;//屏蔽回车键
+							event.returnValue = false;
+							//alert("Hello world!");
+						}
+					}
+					</script>
+
+		<!-- //window弹窗的设置 -->
+		<script type="text/javascript">
+			$(function(){
+					$('#addArticle').window({
+								title: '添加标题',
+								width: 600,
+								modal: true,//遮罩效果
+								shadow: true,//阴影效果
+								closed: true,//关闭
+								height: 400,
+								resizable:true
+	    		});
+			})
+			$(function(){
+					$('#changeArticle').window({
+								title: '添加标题',
+								width: 400,
+								modal: true,//遮罩效果
+								shadow: true,//阴影效果
+								closed: true,//关闭
+								height: 400,
+								resizable:false
+	    		});
+			})
+		</script>
+		<script type="text/javascript">
+     
+	  function zr(ids){
+				
+			//页面加载完成后，创建数据表格datagrid
+			$("#mytable").datagrid({
+				//定义标题行所有的列
+				columns:[
+					   [
+				          {title:'编号',field:'id',checkbox:true,width:60},
+				          //{title:'外键',field:'wid',width:100},
+				          {title:'标题',field:'head',width:120},
+				          {title:'内容',field:'text',width:200},
+						//   {title:'图片',field:'pictureAddress',width:200},
+						  {
+								field : 'pictureAddress',
+								title : '图片',
+								align : 'center',
+								width : 250,
+								formatter:function(value,row){
+									var str = "";
+									if(value!="" || value!=null){
+									str = "<img style=\"height: 80px;width: 150px;\" src=\"/upload/"+value+"\"/>";
+																		return str;
+									}
+								}
+						  }, 
+				          {title:'时间',field:'publishTime',width:200},
+				          {title:'热度',field:'heatNumber',width:80}
+						  ]
+						],
+				//指定数据表格发送ajax请求的地址
+				url:"/getArticleByid?ids="+ids,
+				rownumbers:true,
+				
+				//singleSelect:true,
+				//定义工具栏
+				toolbar:[
+				         {text:'添加',iconCls:'icon-add',width : 120,
+				        	 //为按钮绑定单击事件
+				        	 handler:function(){
+								//增加Header功能
+								$('#addArticle').window("open")				        	 
+				         	 }
+				         },
+						 {text:'删除',iconCls:'icon-remove',width : 120,
+						   handler:function(){
+							  removeByArticleid();
+				         	 }
+						},
+						 {text:'修改',iconCls:'icon-edit',width : 120,
+						 handler:function(){
+							
+							  changeArticle();//这里是多个函数，首先判断是否单一选中，然后打开window弹窗，赋值给input框，点击确定后提交
+				         	 }
+						},
+				        //  {text:'查询',iconCls:'icon-search'}
+				         ],
+				//显示分页条
+				pagination:true,
+				fit:true ,
+				//pageList:[3,5,7,10]
+			});
+			var p = $('#mytable').datagrid('getPager');   
+			    $(p).pagination({             
+ 					//pageSize: 10,//每页显示的记录条数，默认为10        
+  					 pageList:[3,5,7,10,15],//可以设置每页记录条数的列表         
+					beforePageText: '第',//页数文本框前显示的汉字 
+				    //PageText:,
+					afterPageText: '页    共 {pages} 页',      
+					  displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录', 
+					 
+		          });
+		};
+
+
+//获取初始的值,初始展示给页面的值
+       function  getTreeid(){
+			var treeObj = $.fn.zTree.getZTreeObj("ztree3");//获取这个节点		
+			 var node = treeObj.getNodes();//所有父节点
+			
+			 var nodes = treeObj.transformToArray(node[0]);//初始的时候只加载第一个
+			 lx(node[0].id)
+			// alert(node[0].id);
+			 var array = new Array();
+			for(var i=0;i<nodes.length;i++){
+					var staff = nodes[i];//json对象
+					var id = staff.id;
+					//alert(id);
+					array.push(id);
+							}
+				var ids = array.join(",");//1,2,3,4,5
+            zr(ids);
+		   }
+//点哪个得哪个点击哪个就获取哪个的id并且循环出所有的子id
+			function getOnclickid(id){
+				//alert(id);
+				 var nodeslx;
+			var treeObj = $.fn.zTree.getZTreeObj("ztree3");//获取这个节点		
+			 var node = treeObj.getNodes();//所有父节点
+			 var nodes = treeObj.transformToArray(node);
+			  for(var i=0;i<nodes.length;i++){
+                     if(nodes[i].id==id){
+						//  alert(id)
+							nodeslx=treeObj.transformToArray(nodes[i]);
+					 }
+			  }
+			 var array = new Array();
+			for(var i=0;i<nodeslx.length;i++){
+					var staff = nodeslx[i];//json对象
+					var id = staff.id;
+					//alert(id);
+					array.push(id);
+							}
+				var ids = array.join(",");//1,2,3,4,5
+			zr(ids);//将所有的ids传给zr（）函数然后进行后台的查询加载
+			 var options = $("#mytable" ).datagrid("getPager").data("pagination").options;
+                     var pnum = options.pageNumber;
+						/*当页刷新，必须和上面的一起用*/
+						$("#mytable" ).datagrid('reload'); 
+						//refreshNode();
+			}
+		</script>
+
+
+<script>
+			var id=0;
+			function changeArticle(){//这只是打开window窗口，并且去后台取回数据返回到页面上面
+					  //$('#changeHeaderWindow').window("open")
+					  // alert("修改")
+					var rows = $("#mytable").datagrid("getSelections");
+					if(rows.length != 1){
+					//没有选中记录，弹出提示
+					$.messager.alert("提示信息","请选择需要修改的单个header！","warning");
+					}
+						
+					else{
+								$('#changeArticle').window("open")
+								var staff = rows[0];//json对象
+								 id = staff.id;
+								// alert(id)
+										$.ajax({
+												url:"selectOneArticleByid",
+												type:"post",
+												dataType:"Json",
+												data:{
+													id:id,								
+												},
+												success:function (data) {
+													// alert(data)
+													
+												 changeArticle1(data)
+												
+											   }
+										})
+										
+					
+				}
+				//  refreshNodeTree(id1);//未实现
+				//  refreshParentNodeTree(id1);
+			}
+			//这里是将返回来的数据动态展示给页面
+			function changeArticle1(data){//这里是将返回来的数据动态展示给页面
+				//alert(data.oneArtice.id);
+				$("#head1").val(data.oneArtice.head);
+				$("#text1").val(data.oneArtice.text);
+			   //$("#picture1").val(data.oneArtice.pictureAddress);
+			}
+
+//这里是修改的确定按钮的功能实现			//这里是对header的改变
+			function changeArticleByid(){//这里是对header的改变，的按钮提交函数
+               var picture =$('#picture1')[0].files[0]
+				var id1=id;
+				var head=$("#head1").val();
+				var text=$("#text1").val();
+				//var picture=$("#picture").val();
+				// alert(id1)
+				// alert(picture)
+				// alert(text)
+				// alert(head)
+				var fm1=new FormData();
+				fm1.append("id",id);
+				fm1.append("head",head);
+				fm1.append("text",text);
+				fm1.append("picture",picture);
+
+				// var id1=id;//这是表格选中的函数
+				// var head=$("#head1").val();
+				// var text=$("#text1").val();
+				//var picture=$("#picture1").val();&&picture!=null&&picture!=""
+				//alert(id1);
+			if(head!=null&&head!=""&&text!=null&&text!=""){
+				$.ajax({
+               		url:"UpdataOneArticleByid",
+              		type:"post",
+               		dataType:"text",
+					data:fm1,
+					processData : false,  
+        			contentType : false,
+                success:function (data) {
+					$("#head1").val("");
+					$("#text1").val("");
+					//$("#picture1").val("");
+					// preview1.outerHTML='';
+                    $('#changeArticle').window("close")
+					 //window.location.reload();
+					 var options = $("#mytable" ).datagrid("getPager").data("pagination").options;
+                     var pnum = options.pageNumber;
+						/*当页刷新，必须和上面的一起用*/
+						$("#mytable" ).datagrid('reload'); 
+						//refreshNode();
+                }
+               })
+				}
+
+			}
+		</script>
+
+
+
+		 <script type="text/javascript">
+		 var id1=0;
+	
+		 		 function  lx(id) {//接受了来自ztree的点击的函数
+			//  if(id==""|id==null|id==undefined){
+			// 	id=node[0].id
+			//  }else{
+            //       id=id;
+			//  }
+			 id1=id;
+					// alert(id);
+					return id;
+			};
+			   
+//////按钮方法，将新闻添加到指定文件夹下面去			
+			 function addArticleByPid(){
+				//  var picture = $("#picture").file;
+				var picture =$('#picture')[0].files[0]
+				var id=id1;
+				var head=$("#head").val();
+				var text=$("#text").val();
+				//var picture=$("#picture").val();
+				//alert(id)
+				//alert(picture)
+				var fm=new FormData();
+				fm.append("id",id);
+				fm.append("head",head);
+				fm.append("text",text);
+				fm.append("picture",picture);
+				var imgObjPreview = document.getElementById("preview");
+			if(head!=null&&head!=""&&text!=null&&text!=""&&picture!=null&&picture!=""){
+				$.ajax({
+               		url:"addArticleByPid",
+              		type:"post",
+               		dataType:"text",
+					data:fm,
+					processData : false,  
+        			contentType : false,
+                success:function (data) {
+					$("#head").val("");
+					$("#text").val("");
+					$("#picture").val("");
+					$("#preview").outerHTML='';
+					// preview.outerHTML='';
+                    $('#addArticle').window("close");
+					 //window.location.reload();
+					 var options = $("#mytable" ).datagrid("getPager").data("pagination").options;
+                     var pnum = options.pageNumber;
+						/*当页刷新，必须和上面的一起用*/
+						$("#mytable" ).datagrid('reload'); 
+						//refreshNode();
+                }
+               })
+				}
+			}
+//////按钮方法，改变当前选中的数据	
+
+
+//////////删除功能,这里不是按钮
+				 function removeByArticleid(){
+					// alert("删除")
+					var rows = $("#mytable").datagrid("getSelections");
+					if(rows.length == 0){
+					//没有选中记录，弹出提示
+					$.messager.alert("提示信息","请选择需要删除的header！","warning");
+						}
+						else{
+									//选中了,弹出确认框
+									$.messager.confirm("删除确认","你确定要删除选中的header吗？",function(r){
+										if(r){
+											
+											var array = new Array();
+											//确定,发送请求
+											for(var i=0;i<rows.length;i++){
+												var staff = rows[i];//json对象
+												var id = staff.id;
+												array.push(id);
+											}
+											var ids = array.join(",");//1,2,3,4,5
+										$.ajax({
+														url:"removeByArticleid",
+														type:"post",
+														dataType:"text",
+														data:{
+															ids:ids,								
+														},
+														success:function (data) {
+															//$('#addHeaderWindow').window("close")
+															//window.location.reload();
+															var options = $("#mytable" ).datagrid("getPager").data("pagination").options;
+															var pnum = options.pageNumber;
+																/*当页刷新，必须和上面的一起用*/
+																$("#mytable" ).datagrid('reload'); 
+																
+														}
+													})
+											
+										}
+									});
+
+						}
+				 }		
+		 </script>
+
+</body>
+</html>

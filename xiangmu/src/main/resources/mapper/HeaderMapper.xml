@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.HeaderDao">
+<!-- 这里做的是查询所有的通过pid=0，查询所有header -->
+    <select id="getHeader" resultMap="headerlogin">
+        select id,pid,header,publishTime from title where pid=#{pid}
+    </select>
+    <resultMap id="headerlogin" type="com.pojo.Header">
+        <result property="id" column="id"/>
+        <result property="pId" column="pid"/>
+        <result property="name" column="header"/>
+         <result property="publishTime" column="publishTime"/>
+    </resultMap>
+    <!--  这里做的是每个header的详细信息查询-->
+      <select id="getHeaderByPid" resultMap="getHeaderByPidlogin">
+        select id,pid,header,publishTime from title where pid=#{pId} limit #{start},#{rows} 
+    </select>
+    <resultMap id="getHeaderByPidlogin" type="com.pojo.Header">
+        <result property="id" column="id"/>
+        <result property="pId" column="pid"/>
+        <result property="name" column="header"/>
+         <result property="publishTime" column="publishTime"/>
+    </resultMap>
+    <!--  这里写的是通过传入一个父类的id增加一个子header-->
+    
+     <select id="addHeaderByPid" >
+       insert into title(pid,header) values(#{pid},#{header})
+    </select>
+    
+     <!--  这里写的是通过传入一个id删除一个header-->
+    
+     <select id="removeHeaderByid" >
+       delete from title where id=#{id}
+    </select>
+    <!--  这里写的是修改功能-->
+      <select id="changeHeaderByid" >
+       update title set header=#{header} where id=#{id}
+    </select>
+    <!--  这里写的是修改功能的实时显示-->
+   <select id="selectone" resultType="String">
+        select header from title where id=#{id}
+    </select>
+<!--shift+ctrl+/  -->
+<!--这里做的是查询所有的个数，准备用来做分页的 -->
+      <select id="totalheader" resultType="int">
+          select count(*) from title where pid=#{pid}
+     </select>
+</mapper>
